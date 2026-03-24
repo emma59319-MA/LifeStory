@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>易經生活智慧導航：穩定版</title>
+    <title>易經生活智慧導航：深度指引版</title>
     <style>
         :root {
             --bg-color: #f7f9fc;
@@ -51,7 +51,6 @@
             box-shadow: var(--shadow); transition: 0.3s;
             display: flex; align-items: center; gap: 15px; font-weight: bold;
             color: var(--primary);
-            /* 確保 iOS 可點擊 */
             -webkit-tap-highlight-color: transparent; 
         }
         .big-btn.primary { background: var(--accent); color: #fff; }
@@ -134,6 +133,11 @@
         .info-card.gen { border-color: var(--primary); }
         .info-card.fam { border-color: var(--family); background: #f1f8e9; }
         .info-card.work { border-color: var(--work); background: #e3f2fd; }
+        .info-card.teach { background: var(--teach-bg); border-color: var(--gold); border-left-width: 8px; }
+        
+        .teach-title { font-weight: bold; color: #f57f17; font-size: 1.1rem; margin-bottom: 10px; }
+        .teach-grid { display: grid; grid-template-columns: 1fr; gap: 10px; font-size: 0.95rem; color: #555; }
+        @media(min-width: 600px) { .teach-grid { grid-template-columns: 1fr 1fr 1fr; } }
 
         .detail-list { padding-left: 20px; margin: 5px 0; }
         .detail-list li { margin-bottom: 8px; line-height: 1.6; }
@@ -364,7 +368,8 @@
     };
 
     // ==========================================================
-    // 2. 六十四卦基礎資料 (64 Hexagrams)
+    // 2. 六十四卦基礎資料 (64 Hexagrams Base Data)
+    // 修正了第 42 卦代碼為 100011，確保第 25 卦能正確顯示
     // ==========================================================
     const hexMap = {
         "111111": {n:"乾為天", s:"剛健中正", id:1, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, 
@@ -408,7 +413,7 @@
         "001010": {n:"水山蹇", s:"寸步難行", id:39, stars:"⭐", tag:"大凶"}, 
         "010100": {n:"雷水解", s:"災難解除", id:40, stars:"⭐⭐⭐⭐", tag:"吉"},
         "110001": {n:"山澤損", s:"減損犧牲", id:41, stars:"⭐⭐", tag:"平"}, 
-        "100111": {n:"風雷益", s:"利益增加", id:42, stars:"⭐⭐⭐⭐⭐", tag:"大吉"},
+        "100011": {n:"風雷益", s:"利益增加", id:42, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, /* 修正處 */
         "111110": {n:"澤天夬", s:"決斷清除", id:43, stars:"⭐⭐", tag:"凶"}, 
         "011111": {n:"天風姤", s:"不期而遇", id:44, stars:"⭐⭐", tag:"凶"},
         "000110": {n:"澤地萃", s:"聚集匯合", id:45, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
@@ -434,35 +439,9 @@
     };
 
     // ==========================================================
-    // 3. 詳細文案資料庫
+    // 3. 詳細文案資料庫 (手寫示範 + 自動補齊)
     // ==========================================================
     const detailedDB = {
-        "1": {
-            gen: "乾卦代表純粹的陽剛能量，象徵「創造」與「領袖」。就像太陽高掛天空，充滿活力與動力。你的運勢正旺，適合啟動大計畫。",
-            work: "事業運極強，有機會擔任領導角色或開創新局。但要注意，能力越強責任越大，切忌傲慢，要懂得與人合作。",
-            fam: "<ul class='detail-list'><li><strong><span class='highlight-text'>家庭能量</span>：</strong>陽氣極盛，充滿活力。</li><li><strong><span class='highlight-text'>決策方向</span>：</strong>非常利於執行家庭的重大計畫，例如買房、創業、搬家。</li><li><strong><span class='highlight-text'>相處提醒</span>：</strong>注意「過剛易折」，長輩不要太強勢命令，要學習「剛柔並濟」，多聽聽家人的感受。</li></ul>",
-            yaos: [
-                {v: "時機未到，能力還不足。低調學習，不要急著表現。", tip: "沈潛勿動"},
-                {v: "才華初露，是展現自我的好時機，會得到長輩賞識。", tip: "尋求前輩"},
-                {v: "處於上升期壓力大，勤奮工作並隨時反省，雖苦無災。", tip: "勤奮謹慎"},
-                {v: "面臨進退的關卡。可以嘗試突破現狀，關鍵的嘗試點。", tip: "大膽嘗試"},
-                {v: "運勢達到最高峰，事業與家庭都非常圓滿，發揮影響力。", tip: "大展宏圖"},
-                {v: "凡事不可太過分，態度傲慢容易導致失敗。懂得急流勇退。", tip: "知足謙虛"}
-            ]
-        },
-        "2": {
-            gen: "這是一個關於「包容」與「配合」的卦象。就像大地承載萬物一樣，不爭先、不主導，而是順應局勢，給予支持。",
-            work: "現在不是強出頭的時候。適合擔任輔佐、執行或幕僚的角色。跟隨一位好的領導者，默默耕耘，未來會有巨大的收穫。",
-            fam: "<ul class='detail-list'><li><strong><span class='highlight-text'>家庭氣氛</span>：</strong>溫暖、包容、和諧。</li><li><strong><span class='highlight-text'>角色扮演</span>：</strong>最適合發揮「母親」的特質：包容缺點、照顧生活。</li><li><strong><span class='highlight-text'>相處之道</span>：</strong>不要急著做決定或爭輸贏，先安撫情緒。「以柔克剛」是最好智慧。</li></ul>",
-            yaos: [
-                {v: "見微知著。看到小問題的徵兆要立刻處理，否則變大麻煩。", tip: "防微杜漸"},
-                {v: "內心正直、行為端正，順其自然發展就會很順利。", tip: "正直順從"},
-                {v: "有才華但不炫耀。默默支持，把功勞歸給別人反而能長久。", tip: "低調輔佐"},
-                {v: "環境險惡時，謹慎小心，閉嘴不言，能保平安。", tip: "謹言慎行"},
-                {v: "地位高還能保持謙虛柔順，這是大吉大利的象徵。", tip: "謙虛待人"},
-                {v: "太強勢導致兩敗俱傷。家庭爭吵激烈，沒有贏家。", tip: "避免衝突"}
-            ]
-        },
         "37": {
             gen: "風自火出，熱氣向外擴散。這代表一切的基礎在於「內部」。先把家裡（或團隊內部）安頓好，外面的事情自然順利。",
             work: "團隊合作是關鍵。現在不是單打獨鬥的時候，要確認團隊成員各司其職，內部溝通順暢。產品或服務要回歸核心價值。",
@@ -502,15 +481,56 @@
                 {v: "展現大氣度，包容家人的過錯或意外的變化，會有天助。", tip: "大度包容"},
                 {v: "個性太過孤僻高傲，拒絕溝通，令人遺憾。", tip: "放下身段"}
             ]
+        },
+        "1": {
+            gen: "能量最強的時刻，象徵「創造」與「領袖」。就像太陽高掛天空，充滿活力與動力。你的運勢正旺，適合啟動大計畫。",
+            work: "事業運極強，有機會擔任領導角色或開創新局。但要注意，能力越強責任越大，切忌傲慢，要懂得與人合作。",
+            fam: `
+                <ul class="detail-list">
+                    <li><strong><span class="highlight-text">家庭能量</span>：</strong>陽氣極盛，充滿活力與動力。</li>
+                    <li><strong><span class="highlight-text">決策方向</span>：</strong>非常利於執行家庭的重大計畫，例如買房、創業、搬家或子女教育的大方向制定。</li>
+                    <li><strong><span class="highlight-text">相處提醒</span>：</strong>注意「過剛易折」。父親或主要決策者容易太過強勢、命令式溝通。</li>
+                    <li><strong><span class="highlight-text">建議</span>：</strong>要學習「剛柔並濟」，多聽聽其他家人的感受，不要變成獨裁者，家庭才會溫暖長久。</li>
+                </ul>
+            `,
+            yaos: [
+                {v: "時機未到，能力還不足。低調學習，不要急著表現。", tip: "沈潛勿動"},
+                {v: "才華初露，是展現自我的好時機，會得到長輩賞識。", tip: "尋求前輩"},
+                {v: "處於上升期壓力大，勤奮工作並隨時反省，雖苦無災。", tip: "勤奮謹慎"},
+                {v: "面臨進退的關卡。可以嘗試突破現狀，關鍵的嘗試點。", tip: "大膽嘗試"},
+                {v: "運勢達到最高峰，事業與家庭都非常圓滿，發揮影響力。", tip: "大展宏圖"},
+                {v: "凡事不可太過分，態度傲慢容易導致失敗。懂得急流勇退。", tip: "知足謙虛"}
+            ]
+        },
+        "2": {
+            gen: "這是一個關於「包容」與「配合」的卦象。就像大地承載萬物一樣，不爭先、不主導，而是順應局勢，給予支持。",
+            work: "現在不是強出頭的時候。適合擔任輔佐、執行或幕僚的角色。跟隨一位好的領導者，默默耕耘，未來會有巨大的收穫。",
+            fam: `
+                <ul class="detail-list">
+                    <li><strong><span class="highlight-text">家庭氣氛</span>：</strong>溫暖、包容、和諧。</li>
+                    <li><strong><span class="highlight-text">角色扮演</span>：</strong>最適合發揮「母親」的特質：包容缺點、照顧生活、聆聽心事。</li>
+                    <li><strong><span class="highlight-text">相處之道</span>：</strong>不要急著做決定或爭輸贏，先安撫家人的情緒。「以柔克剛」是目前最好的智慧。</li>
+                    <li><strong><span class="highlight-text">行動</span>：</strong>多做家務，烹飪美食，佈置舒適的居家環境，能有效凝聚家人的感情。</li>
+                </ul>
+            `,
+            yaos: [
+                {v: "見微知著。看到小問題的徵兆要立刻處理，否則變大麻煩。", tip: "防微杜漸"},
+                {v: "內心正直、行為端正，順其自然發展就會很順利。", tip: "正直順從"},
+                {v: "有才華但不炫耀。默默支持，把功勞歸給別人反而能長久。", tip: "低調輔佐"},
+                {v: "環境險惡時，謹慎小心，閉嘴不言，能保平安。", tip: "謹言慎行"},
+                {v: "地位高還能保持謙虛柔順，這是大吉大利的象徵。", tip: "謙虛待人"},
+                {v: "太強勢導致兩敗俱傷。家庭爭吵激烈，沒有贏家。", tip: "避免衝突"}
+            ]
         }
     };
 
-    // 自動補齊其餘 60 卦的通用智慧文本
+    // 自動補齊 1-64 卦的詳細資料
     for(let i=1; i<=64; i++) {
         const idStr = i.toString();
         if(!detailedDB[idStr]) {
             const key = Object.keys(hexMap).find(k => hexMap[k].id === i);
             const base = hexMap[key];
+            
             detailedDB[idStr] = {
                 gen: `此卦為【${base.n}】。卦象特質為「${base.s}」。代表當前局勢正處於 ${base.tag} 的狀態，應根據此卦的特性來調整步伐。`,
                 work: `在事業與決策上，應秉持「${base.s}」的精神。若為吉卦，請積極進取、擴展版圖；若為凶卦或平卦，請保守待機，多觀察環境變化，切勿盲目投資。`,
@@ -562,7 +582,6 @@
         return html;
     }
 
-    // 安全的事件綁定
     function setIntent(text, element) {
         document.getElementById('intentText').innerHTML = `您想詢問：<span style="color:var(--work); font-weight:bold;">${text}</span>。請專注默念您的問題，然後開始起卦。`;
         document.querySelectorAll('.chip').forEach(el => el.classList.remove('selected'));
@@ -583,7 +602,7 @@
         resetCoins();
         document.getElementById('tossResultText').textContent = "";
         document.getElementById('progressBar').style.width = "0%";
-        document.getElementById('tossBtn').disabled = false; // 確保重啟時按鈕可用
+        document.getElementById('tossBtn').disabled = false;
         updateStepText();
         switchPage('viewDivination');
     }
@@ -628,6 +647,7 @@
                     generateAndShowResult(hexCode, moveArr);
                 }, 1000);
             }
+
         }, 800);
     }
 
@@ -654,11 +674,8 @@
         if(!base) { alert("發生錯誤，請重試"); goHome(); return; }
 
         let detail = detailedDB[base.id.toString()];
-        
-        // 深拷貝，以免修改到原資料庫
         let finalData = JSON.parse(JSON.stringify({ ...base, ...detail, c: code }));
 
-        // 加上吉凶標頭
         finalData.gen = `<strong style='color:var(--accent); font-size:1.1em;'>【${base.tag}】 ${base.stars}</strong><br><br>` + finalData.gen;
 
         renderDetail(finalData, moves);
@@ -695,9 +712,8 @@
         document.getElementById('rWork').innerHTML = data.work;
         document.getElementById('rFam').innerHTML = data.fam;
 
-        // 如果是起卦模式，顯示教學區
         const hasMove = moveArr.includes(true);
-        if(moves.length > 0 && moves.includes(true) || moves.includes(false)) {
+        if(moves.length > 0 && (moves.includes(true) || moves.includes(false))) {
              document.getElementById('teachBox').style.display = 'block';
         } else {
              document.getElementById('teachBox').style.display = 'none';
@@ -788,7 +804,6 @@
             
             item.onclick = () => {
                 const code = key.split('').map(Number);
-                // 瀏覽模式不帶變爻，隱藏教學區塊
                 document.getElementById('teachBox').style.display = 'none';
                 generateAndShowResult(code, [false,false,false,false,false,false]);
             };
