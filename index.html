@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>易經生活智慧導航：64卦滿載究極版</title>
+    <title>易經生活智慧導航：穩定版</title>
     <style>
         :root {
             --bg-color: #f7f9fc;
@@ -51,9 +51,12 @@
             box-shadow: var(--shadow); transition: 0.3s;
             display: flex; align-items: center; gap: 15px; font-weight: bold;
             color: var(--primary);
+            /* 確保 iOS 可點擊 */
+            -webkit-tap-highlight-color: transparent; 
         }
         .big-btn.primary { background: var(--accent); color: #fff; }
         .big-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .big-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
 
         /* 引導區 */
         .guide-box { margin-bottom: 30px; text-align: center;}
@@ -62,6 +65,7 @@
         .chip {
             padding: 8px 20px; background: #e8eaf6; color: var(--indigo); border-radius: 20px;
             cursor: pointer; font-size: 0.95rem; transition: 0.2s; border: 1px solid transparent;
+            -webkit-tap-highlight-color: transparent; 
         }
         .chip:hover, .chip.selected { background: var(--indigo); color: white; transform: translateY(-2px); }
         .intent-text { 
@@ -93,11 +97,13 @@
             background: #e0e0e0; border: none; padding: 12px 32px; border-radius: 40px;
             cursor: pointer; font-weight: bold; color: #444; font-size: 1.5rem;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.2s;
+            -webkit-tap-highlight-color: transparent; 
         }
         .btn-back:hover { background: #d0d0d0; transform: scale(1.05); }
         
         /* --- 結果詳解 --- */
         .result-title-box { text-align: center; margin-bottom: 30px; }
+        .gua-badge { display: inline-block; background: var(--primary); color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 0.9rem; margin-bottom: 10px; }
         
         .indigo-char { color: var(--indigo); }
         .red-char { color: var(--accent); }
@@ -128,11 +134,10 @@
         .info-card.gen { border-color: var(--primary); }
         .info-card.fam { border-color: var(--family); background: #f1f8e9; }
         .info-card.work { border-color: var(--work); background: #e3f2fd; }
-        .info-card.teach { background: var(--teach-bg); border-color: var(--gold); border-left-width: 8px; }
 
-        .teach-title { font-weight: bold; color: #f57f17; font-size: 1.1rem; margin-bottom: 10px; }
-        .teach-grid { display: grid; grid-template-columns: 1fr; gap: 10px; font-size: 0.95rem; color: #555; }
-        @media(min-width: 600px) { .teach-grid { grid-template-columns: 1fr 1fr 1fr; } }
+        .detail-list { padding-left: 20px; margin: 5px 0; }
+        .detail-list li { margin-bottom: 8px; line-height: 1.6; }
+        .highlight-text { font-weight: bold; color: var(--family); }
 
         .card-label { font-weight: bold; margin-bottom: 10px; display: block; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
         .card-content { line-height: 1.8; color: #444; text-align: justify; }
@@ -142,7 +147,7 @@
             display: flex; justify-content: center; gap: 40px; margin: 30px 0;
             background: #fff; padding: 20px; border-radius: 16px; box-shadow: var(--shadow);
         }
-        .hex-col { display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
+        .hex-col { display: flex; flex-direction: column; gap: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .line { width: 140px; height: 18px; border-radius: 4px; position: relative; transition: 0.2s; }
         .line.yang { background: var(--yang-color); }
         .line.yin { background: linear-gradient(90deg, var(--yin-color) 42%, transparent 42%, transparent 58%, var(--yin-color) 58%); }
@@ -165,6 +170,7 @@
             background: #fff; padding: 15px 10px; text-align: center; border-radius: 12px; cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s; border: 1px solid transparent;
             display: flex; flex-direction: column; align-items: center;
+            -webkit-tap-highlight-color: transparent; 
         }
         .lib-item:hover { transform: translateY(-3px); border-color: var(--work); }
         
@@ -173,12 +179,14 @@
         .mini-line.yang { background: var(--yang-color); }
         .mini-line.yin { background: linear-gradient(90deg, var(--yin-color) 40%, transparent 40%, transparent 60%, var(--yin-color) 60%); }
 
-        .lib-name { font-weight: bold; font-size: 1.1rem; color: var(--primary); margin-top: 5px;}
+        .lib-name { font-weight: bold; font-size: 1.1rem; color: var(--primary); }
         .hex-symbol-sm { color: var(--accent); font-size: 1.8rem; line-height: 1; display: inline-block; margin: 0 5px; vertical-align: sub; }
 
+        /* 搜尋框 */
         .search-input {
             width: 100%; padding: 12px; border-radius: 30px; border: 1px solid #ddd;
             margin-bottom: 20px; outline: none; text-align: center; font-size: 1rem;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -188,7 +196,7 @@
 
     <div class="app-header">
         <h1 class="app-title">易經生活智慧導航</h1>
-        <div class="app-subtitle">全六十四卦滿載究極版 • 深度家人指引</div>
+        <div class="app-subtitle">全六十四卦完整版 • 深度家人指引 • 吉凶教學</div>
     </div>
 
     <div id="viewHome" class="page-section active">
@@ -196,11 +204,11 @@
         <div class="guide-box">
             <span class="guide-label">💡 請問您想問什麼方向？</span>
             <div class="guide-chips">
-                <div class="chip" onclick="setIntent('近期運勢')">近期運勢</div>
-                <div class="chip" onclick="setIntent('工作轉職')">工作轉職</div>
-                <div class="chip" onclick="setIntent('家庭關係')">家庭關係</div>
-                <div class="chip" onclick="setIntent('投資決策')">投資決策</div>
-                <div class="chip" onclick="setIntent('感情發展')">感情發展</div>
+                <div class="chip" onclick="setIntent('近期運勢', this)">近期運勢</div>
+                <div class="chip" onclick="setIntent('工作轉職', this)">工作轉職</div>
+                <div class="chip" onclick="setIntent('家庭關係', this)">家庭關係</div>
+                <div class="chip" onclick="setIntent('投資決策', this)">投資決策</div>
+                <div class="chip" onclick="setIntent('感情發展', this)">感情發展</div>
             </div>
             <div id="intentText" class="intent-text">請專注默念您的問題，心誠則靈...</div>
         </div>
@@ -251,7 +259,10 @@
         </div>
 
         <div class="result-title-box">
+            <span class="gua-badge" id="rId">--</span>
+            
             <div class="meta-box" id="rTags"></div>
+
             <h1 id="rTitle" style="font-size: 2.5rem; margin: 10px 0; color: var(--primary);">--</h1>
             <div id="rSub" style="font-size: 1.2rem; color: #666;">--</div>
         </div>
@@ -268,12 +279,22 @@
             </div>
         </div>
 
-        <div class="info-card teach">
+        <div class="info-card teach" style="display: none;" id="teachBox">
             <div class="teach-title">🎓 解卦小教室：如何看懂結果？</div>
             <div class="teach-grid">
-                <div><strong>1. 本卦（現狀）</strong><p>代表您目前所處的環境與狀態。如果沒變爻，維持此現狀。</p></div>
-                <div><strong>2. 變爻（關鍵點）</strong><p style="color:var(--accent);">最重要！</p><p>代表事情變化的轉折點。請優先參考下方亮黃底色的爻辭。</p></div>
-                <div><strong>3. 之卦（趨勢）</strong><p>代表事情未來的走向。當變爻作用後，局勢會演變成的樣子。</p></div>
+                <div>
+                    <strong>1. 本卦（現狀）</strong>
+                    <p>代表您目前所處的環境、狀態與基礎。如果沒有變爻，事情就會維持這個狀態。</p>
+                </div>
+                <div>
+                    <strong>2. 變爻（關鍵點）</strong>
+                    <p style="color:var(--accent);">這是最重要的！</p>
+                    <p>代表事情變化的轉折點、行動建議。請優先參考下方亮黃底色的爻辭。</p>
+                </div>
+                <div>
+                    <strong>3. 之卦（趨勢）</strong>
+                    <p>代表事情發展的未來走向。當變爻發生作用後，局勢會演變成的樣子。</p>
+                </div>
             </div>
         </div>
 
@@ -284,7 +305,7 @@
 
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
             <div class="info-card fam">
-                <span class="card-label" style="color:var(--family);">🏡 家人與生活指引</span>
+                <span class="card-label" style="color:var(--family);">🏡 家人與生活指引 (深度版)</span>
                 <div id="rFam" class="card-content">--</div>
             </div>
             <div class="info-card work">
@@ -311,7 +332,7 @@
 
         <div class="yao-list">
             <div style="padding:15px; background:#fafafa; border-bottom:1px solid #eee; font-weight:bold; color:#666;">
-                📜 六爻詳解 (請對照上方變爻指示)
+                📜 六爻詳解 (動爻為變數關鍵)
             </div>
             <div id="rYaoList"></div>
         </div>
@@ -332,45 +353,461 @@
 </div>
 
 <script>
-    // ----------------------------------------------------------
-    // 高效壓縮資料庫 (包含 64 卦所有的原文與白話翻譯)
-    // 欄位: [0二進位碼, 1卦名, 2特質, 3吉凶, 4星級, 5總解, 6事業, 7家庭, 8~13爻辭]
-    // 爻辭格式: "原文|白話|提示"
-    // ----------------------------------------------------------
-    const rawDB = [
-        ["111111", "乾為天", "剛健中正", "大吉", "⭐⭐⭐⭐⭐", "純陽至剛，萬物之始。運勢正旺，充滿創造力，適合啟動大計畫。", "事業運極強，易擔重任。切忌傲慢，需懂得與人合作。", "家庭能量極盛。利於重大決策。勿過度強勢，需剛柔並濟。", "初九:潛龍勿用|時機未到，能力不足，低調學習|沈潛勿動", "九二:見龍在田|才華初露，展現自我的好時機，得長輩賞識|尋求前輩", "九三:君子終日乾乾|壓力大，勤奮工作並隨時反省，雖苦無災|勤奮謹慎", "九四:或躍在淵|面臨進退的關卡，可以嘗試突破現狀|大膽嘗試", "九五:飛龍在天|運勢巔峰，事業與家庭圓滿，發揮影響力|大展宏圖", "上九:亢龍有悔|凡事不可太過，傲慢易失敗，懂得急流勇退|知足謙虛"],
-        ["000000", "坤為地", "柔順包容", "大吉", "⭐⭐⭐⭐⭐", "如大地承載萬物，不爭先、不主導，順應局勢給予支持。", "不宜強出頭。適合輔佐、執行，跟隨好領導默默耕耘。", "氣氛和諧。發揮包容特質，不爭輸贏，以柔克剛安撫情緒。", "初六:履霜堅冰至|見微知著，看到小問題要立刻處理|防微杜漸", "六二:直方大|內心正直行為端正，自然發展就會順利|正直順從", "六三:含章可貞|有才華不炫耀，功勞歸給別人反而長久|低調輔佐", "六四:括囊無咎|環境險惡時，謹言慎行，閉嘴保平安|謹言慎行", "六五:黃裳元吉|地位高還能保持謙虛柔順，大吉大利|謙虛待人", "上六:龍戰于野|太強勢硬碰硬導致兩敗俱傷|避免衝突"],
-        ["100010", "水雷屯", "萬物始生", "凶", "⭐⭐", "如種子破土，充滿生命力但阻力極大，萬事起頭難。", "創業或新專案初期困難重重，宜穩紮穩打，尋求外援。", "面臨新階段(新婚/新生兒)，會手忙腳亂，需耐心磨合。", "初九:磐桓利居貞|起頭難，不要輕易改變方向，先穩固基礎|守正待機", "六二:屯如邅如|進退兩難，請堅持自己的原則與底線|堅持原則", "六三:即鹿無虞|方向不對就像空手打獵，適時停止|知所進退", "六四:乘馬班如|遇到困難應主動求助，不要獨自承擔|尋求幫助", "九五:屯其膏|資源不足，不要好高騖遠，從小處做起|腳踏實地", "上六:泣血漣如|窮途末路，一直不順需徹底改變思維|轉換跑道"],
-        ["010001", "山水蒙", "啟蒙之際", "平", "⭐⭐", "如在大霧中行走，掌握不足。需要良師益友引導，不可妄動。", "經驗不足，應虛心請教前輩，切勿自作聰明。教育訓練是重點。", "注重子女教育，初期須立下規矩。家人間有誤會應尋求客觀協助。", "初六:發蒙利用刑人|教育或事情之初，需立下規範與界線|建立規矩", "九二:包蒙吉|寬容地教導或對待他人的不懂，大吉|包容體諒", "六三:勿用取女|意志不堅定，容易受金錢或外力誘惑|堅定心智", "六四:困蒙吝|困於無知，不主動學習會遭遇困境|主動求知", "六五:童蒙吉|虛心求教，像童真般純粹地學習，吉利|虛心求教", "上九:擊蒙|嚴厲管教防範未然，但不宜過度嚴苛|適度規範"],
-        ["111010", "水天需", "等待時機", "平", "⭐⭐⭐", "前方有險阻，不適合強行突破。應養精蓄銳，耐心等待。", "案子卡住不要焦慮。利用空檔整理內部、培訓團隊。", "適合平靜過日子，不宜有大變動，多安排家庭聚餐放鬆心情。", "初九:需于郊|在安全地帶安穩等待，遠離風暴無災|遠離是非", "九二:需于沙|會聽到閒言閒語，但沒有實質傷害|不理流言", "九三:需于泥|陷於泥淖處境不佳，容易招災需警覺|提高警覺", "六四:需于血|雖受傷害，但順應情勢終能脫險|順應變化", "九五:需于酒食|安然享受酒食等待，保持愉快大吉|安心享樂", "上六:入于穴|陷入低潮有不速之客，以禮相待轉運|廣結善緣"],
-        ["010111", "天水訟", "爭執訴訟", "凶", "⭐", "目標不一致，意見不合。此時宜退讓求和，爭勝必結仇。", "易現派系鬥爭或合約糾紛。做事留退路，尋求高層仲裁。", "火藥味濃。各退一步，不要在氣頭上爭論，冷靜後再溝通。", "初六:不永所事|小摩擦及時停住，不鬧大最終吉利|及時停損", "九二:不克訟|實力懸殊打不贏，退讓避開保平安|退一步", "六三:食舊德|安守本分吃老本，不爭奪非分之物|守住既有", "九四:不克訟復即命|知錯能改，改變強硬態度回歸正道|知錯能改", "九五:訟元吉|遇到公正的裁決者，交由第三方處理|尋求仲裁", "上九:或錫之鞶帶|就算爭贏得到獎賞也會失去，爭來無益|放下執著"],
-        ["010000", "地水師", "行軍打仗", "吉", "⭐⭐⭐", "勞師動眾，需要高度紀律與優秀領導者。集中力量統一步伐。", "適合帶領團隊攻堅。需要明確制度、嚴明賞罰與主帥坐鎮。", "面臨需要全家動員的大事，必須推選主事者，其他人絕對配合。", "初六:師出以律|一開始就要有嚴明規矩，否則後果慘|建立紀律", "九二:在師中吉|主帥坐鎮中央得信任，行事中正大吉|坐鎮中央", "六三:師或輿屍|指揮不當多頭馬車，會遭遇慘痛失敗|避免瞎指揮", "六四:師左次|衡量情勢不佳，暫時撤退安營是正確的|暫時撤退", "六五:田有禽|對於內部的叛逆或小人，必須果斷懲處|賞罰分明", "上六:大君有命|論功行賞，但千萬不可重用小人免後患|慎選對象"],
-        ["000010", "水地比", "親近依附", "吉", "⭐⭐⭐⭐", "水融於地，人際關係融洽。依靠團隊合作與建立良善關係獲勝。", "適合拓展人脈、找合夥人或開發客戶。領導者要展現親和力。", "氣氛溫馨向心力強。多讚美家人，是修復感情裂痕絕佳時機。", "初六:有孚比之|用滿滿誠意去親近他人，出發點真誠即吉|真誠待人", "六二:比之自內|發自內心親近依附，堅守正道得好回應|發自內心", "六三:比之匪人|親近了不該親近的小人，小心被拖累|慎選朋友", "六四:外比之|主動對外拓展良性的賢良人士人際關係|向外結交", "九五:顯比王用三驅|光明正大展現親和，來者不拒去者不追|大將之風", "上六:比之無首|無法團結眾人或依附無原則者，終失敗|凝聚向心"],
-        ["111011", "風天小畜", "密雲不雨", "平", "⭐⭐⭐", "力量尚小，只能暫時蓄積，密雲不雨，不可強行推動。", "時機未成熟，多做準備，累積資源。不要急於求成。", "注重日常點滴累積，多儲蓄少花費。培養家庭共同興趣。", "初九:復自道|回到正軌，堅守本分沒有災禍|回歸正軌", "九二:牽復吉|被牽引回正道，接受他人善意勸導吉利|接受引導", "九三:輿說輻|車輪脫落，夫妻或夥伴失和，避免硬碰硬|避免衝突", "六四:有孚血去惕出|誠信互助，免除血光與恐懼之災|建立互信", "九五:有孚攣如|以誠信合作，與鄰里夥伴共同富裕|共享資源", "上九:既雨既處|目標已達成，見好就收不可貪心再進|見好就收"],
-        ["110111", "天澤履", "如履薄冰", "凶", "⭐⭐", "跟在老虎尾巴後，充滿危機，需極度小心，謹慎行事。", "伴君如伴虎，注重職場倫理與階級，對待高層需恭敬。", "家中長輩脾氣大，應順從尊敬，避免頂撞。行事需低調。", "初九:素履往無咎|保持樸素低調行事，沒有災禍|保持低調", "九二:履道坦坦|大道平坦，安守本分不妄動則吉|安分守己", "六三:跛能履履虎尾|能力不足卻強出頭，非常危險|量力而為", "九四:履虎尾愬愬|雖然危險，但保持恐懼謹慎最終吉利|步步為營", "九五:夬履貞厲|剛愎自用、獨斷獨行會有危險|避免獨斷", "上九:視履考祥|回顧檢視過往行為，結果圓滿|反省總結"],
-        ["111000", "地天泰", "天地交泰", "大吉", "⭐⭐⭐⭐⭐", "陰陽調和，小往大來，溝通順暢，是非常吉利亨通的時刻。", "上下同心，溝通無礙。適合開展計畫，互信互助大豐收。", "家庭和睦，夫妻感情佳。大事小事皆能順利解決。", "初九:拔茅茹|團結同類，牽一髮動全身，共同進取吉|團結合作", "九二:包荒用馮河|包容寬大，果敢決斷，不結黨營私|寬大包容", "九三:無平不陂|世事無常，在艱難中堅守正道不動搖|居安思危", "六四:翩翩不富以其鄰|不靠財富，以誠信聚人，上下交融|誠信交心", "六五:帝乙歸妹|身段柔軟屈尊降貴，大吉大利|謙卑柔和", "上六:城復于隍|運勢轉弱，城牆塌陷，不可輕舉妄動|保守防禦"],
-        ["000111", "天地否", "閉塞不通", "大凶", "⭐", "天地不交，閉塞不通。小人當道，君子受排擠，諸事不順。", "溝通不良，計畫受阻。宜低調自保，不宜推動新案。", "家人間冷戰或互不理解。切勿正面衝突，宜暫時保持距離。", "初六:拔茅茹|見機不對，與志同道合者一起退隱自保|明哲保身", "六二:包承小人吉|小人得志，君子受困，需忍辱負重|忍辱負重", "六三:包羞|包藏羞恥，行為不當，處境難堪|反省行為", "九四:有命無咎|奉命行事，轉危為安，打破僵局|順應上意", "九五:休否大人吉|終止閉塞的局面，大人物能扭轉乾坤|扭轉乾坤", "上九:傾否先否後喜|否極泰來，閉塞結束，喜事將臨|否極泰來"],
-        ["101111", "天火同人", "與人同心", "大吉", "⭐⭐⭐⭐", "在野外與人和諧相處，打破藩籬，利於團結與廣泛合作。", "適合跨部門合作、結盟或拓展大眾市場。大公無私為佳。", "走出小家庭，參與家族或社區活動。家人間目標一致。", "初九:同人于門|出門結交朋友，態度公開透明無災|公開透明", "六二:同人于宗|只與同宗族或小圈圈親近，格局太小|擴大格局", "九三:伏戎于莽|埋伏兵馬，互相猜忌，長期不敢行動|放下猜忌", "九四:乘其墉弗克攻|爬上城牆卻不攻，知難而退自我克制吉|知難而退", "九五:同人先號啕而後笑|歷經艱辛與波折，最終消除誤會獲團圓|破鏡重圓", "上九:同人于郊|在郊外與人交往，淡泊名利無後悔|淡泊名利"],
-        ["111101", "火天大有", "如日中天", "大吉", "⭐⭐⭐⭐⭐", "盛大富有，如日中天。運勢極旺，物資與精神皆豐收。", "事業大成，財源廣進。應保持謙虛，防驕傲自滿。", "家庭富裕快樂。可進行大筆投資或慶祝，感恩惜福。", "初九:無交害|不與小人交往互相傷害，無災禍|遠離小人", "九二:大車以載|有大車裝載物資，可前往各地發展|積極發展", "九三:公用亨于天子|天子宴請公侯，小人擔當不起這份福氣|德需配位", "九四:匪其彭|不仗勢欺人，保持低調不炫耀財富|低調不炫", "六五:厥孚交如|以誠信交往，保有威嚴，吉利|誠信威嚴", "上九:自天祐之吉無不利|順應天理，上天保佑大吉大利|感恩惜福"],
-        ["001000", "地山謙", "謙虛受益", "大吉", "⭐⭐⭐⭐", "內心如高山堅定，外表如大地平順。謙受益，滿招損。", "越成功越要低調。將功勞歸於團隊，反而獲得更大尊崇。", "長輩不擺架子，晚輩虛心受教。家風敦厚，和樂融融。", "初六:謙謙君子|極度謙虛，以此態度克服大困難吉|極度謙虛", "六二:鳴謙貞吉|謙虛的美德名聲傳揚，堅守正道吉|名聲傳揚", "九三:勞謙君子|有大功勞卻依然謙虛，結局美好|有功不傲", "六四:無不利撝謙|發揮謙虛美德，行事無往不利|發揮美德", "六五:不富以其鄰|不靠財富而靠謙德聚人，利於採取行動|以德服人", "上六:鳴謙利用行師|謙虛名聲遠播，遇到阻礙也可順利解決|名聲遠播"],
-        ["000100", "雷地豫", "安樂愉悅", "吉", "⭐⭐⭐", "雷出地奮，春雷震動萬物復甦，充滿安樂與愉悅。", "計畫順利推動，氣氛佳。但易沉溺享樂，需居安思危。", "家庭充滿歡樂氣氛，適合出遊。但不可荒廢正業與家規。", "初六:鳴豫凶|自鳴得意，過度炫耀快樂會招致凶險|避免得意", "六二:介于石不終日|像石頭般堅定，不沉迷享樂，吉|堅定不迷", "六三:盱豫悔|遲疑不決，為了享樂而巴結他人會後悔|切勿巴結", "九四:由豫大有得|作為快樂的源頭，帶動大家大有收穫|帶動歡樂", "六五:貞疾恆不死|雖有小毛病或壓力，但無大礙不致命|帶病延年", "上六:冥豫成有渝|沉迷快樂至極，若能及時回頭則無災|及時回頭"],
-        ["100110", "澤雷隨", "隨順時勢", "吉", "⭐⭐⭐", "順應環境變化，不固執己見，跟隨賢明者或大趨勢。", "不要逆勢而為，配合市場或上司的決策。從善如流。", "放下個人堅持，多配合家人的步調。出外聽從專業建議。", "初九:官有渝貞吉|職務變動或改變心意，只要走正道就吉|順應變動", "六二:系小子失丈夫|抓了小的失了大的，眼光短淺|看重長遠", "六三:系丈夫失小子|跟隨大人捨棄小人，有得必有失|果斷選擇", "九四:隨有獲貞凶|雖有收穫，但居心不正或功高震主凶|避免越權", "九五:孚于嘉吉|真誠地信任與跟隨美好的事物，吉利|真誠跟隨", "上六:拘系之|被束縛強迫，無奈之下只能跟隨|無奈配合"],
-        ["011001", "山風蠱", "整治革新", "凶", "⭐⭐", "器皿生蟲，象徵內部敗壞、積弊已深。必須痛下決心改革。", "前人留下的爛攤子或內部管理鬆散。必須徹查並革新。", "生活習慣不良導致健康問題，或家庭積怨深。需開誠佈公解決。", "初六:干父之蠱|匡正前輩初期的過失，用心處理無災|及早糾正", "九二:干母之蠱|匡正內部柔性過失，不可太嚴厲需委婉|委婉溝通", "九三:干父之蠱小有悔|改革過程有小波折後悔，但無大礙|堅持改革", "六四:裕父之蠱|寬容放任過失不管，最終會有遺憾|切勿放任", "六五:干父之蠱用譽|成功匡正過失，獲得讚譽與好結果|成功改革", "上九:不事王侯|不參與世俗紛爭，清高自守做好自己|清高自守"],
-        ["110000", "地澤臨", "親臨視察", "大吉", "⭐⭐⭐⭐", "陽氣增長，君子勢力抬頭。長官親自視察，充滿希望。", "適合積極管理、拓展業務。上司對下屬應多關心指導。", "長輩主動關心晚輩。家庭運勢向上，適合孕育新生命。", "初九:咸臨貞吉|以真誠感應來親臨視察，堅守正道吉|真誠感應", "九二:咸臨吉無不利|感應而臨，有實力作後盾，大吉大利|實力後盾", "六三:甘臨無攸利|只用甜言蜜語而不辦實事，沒有好處|切忌虛偽", "六四:至臨無咎|親自深入基層視察，了解實情無災禍|深入基層", "六五:知臨大君之宜|以智慧臨人，知人善任，君王之風吉|知人善任", "上六:敦臨吉無咎|敦厚溫和地對待他人，吉利無災|敦厚溫和"],
-        ["000011", "風地觀", "觀察展示", "平", "⭐⭐⭐", "如風行地上，萬物被感化。適合靜心觀察、反省與學習。", "多看少做。觀察市場動態與高層意向。建立良好典範。", "神明或信仰的指引。多觀摩其他家庭的長處，反省自我。", "初六:童觀|像兒童一樣目光短淺地觀察，無法看清全貌|擴大視野", "六二:窺觀|從門縫偷看，視野狹窄，只見局部|走出局限", "六三:觀我生進退|觀察自己的行為與處境，決定進退|自我反省", "六四:觀國之光|觀察國家光輝，適合外出發展或從政|出外發展", "九五:觀我生|身居高位者反省自己施政，君子無咎|高位反省", "上九:觀其生|觀察天下百姓的生活，君子無咎|體察民情"],
-        ["100101", "火雷噬嗑", "咬斷硬物", "平", "⭐⭐⭐", "口中有物，必須用力咬斷。象徵用刑罰或強力手段糾正錯誤。", "遇到難纏的對手或阻礙，必須用鐵腕手段、依法處理。", "家人犯錯不能姑息，必須嚴格糾正，把話說清楚不留疙瘩。", "初九:屨校滅趾|初犯受小懲罰，記取教訓無大礙|記取教訓", "六二:噬膚滅鼻|刑罰公正深入，雖受傷但無咎|嚴格執行", "六三:噬臘肉遇毒|處理難題遇到硬茬，小有不順與抱怨|克服阻力", "九四:噬干胏得金矢|艱難中堅持到底，獲得財富與權力|堅持到底", "六五:噬干肉得黃金|治理艱難如咬乾肉，最終獲得豐厚收穫|終獲回報", "上九:何校滅耳凶|罪惡深重不聽勸告，大禍臨頭凶險|大禍臨頭"],
-        ["101001", "山火賁", "裝飾修飾", "小吉", "⭐⭐⭐", "夕陽照山，外表美麗但短暫。注重包裝與修飾，小事吉大事緩。", "需注重提案包裝、個人形象。但不可虛有其表，缺乏實力。", "家居適合輕度佈置。感情注重浪漫儀式，但需防華而不實。", "初九:賁其趾舍車而徒|修飾腳趾，捨棄車子步行，安步當車|腳踏實地", "六二:賁其須|修飾鬍鬚，隨附他人行動，無自主權|依附他人", "九三:賁如濡如|裝飾澤潤光彩，堅守正道吉利|光彩潤澤", "六四:賁如皤如|裝飾素雅潔白，騎白馬求賢，吉|返璞歸真", "六五:賁于丘園|在丘園素雅裝飾，禮輕情意重，吉|心意為重", "上九:白賁無咎|極致的樸素無華，回歸本真，無災禍|回歸本真"],
-        ["000001", "山地剝", "剝落侵蝕", "大凶", "⭐", "陰盛陽衰，基礎動搖，如同高山崩塌。宜謹慎防守。", "危機四伏，資源流失，小人當道。切勿投資或行動，保本第一。", "健康亮紅燈，或家庭財務透支嚴重。需立即停止消耗。", "初六:剝床以足|床腳被剝蝕，危機從基層開始，凶|危機初現", "六二:剝床以辨|床身被剝蝕，危機逼近，凶險加劇|危機逼近", "六三:剝之無咎|與小人同流合污中的清流，獨善其身無咎|獨善其身", "六四:剝床以膚|剝蝕迫近肌膚，災難臨頭，大凶|災難臨頭", "六五:貫魚以宮人寵|像魚串般有序，帶領眾人歸順正道，無不利|有序歸順", "上九:碩果不食|僅存的碩果。君子得救，小人將失去庇護|保留碩果"],
-        ["100000", "地雷復", "萬物復甦", "吉", "⭐⭐⭐⭐", "寒冬過後一陽來復。事情到了谷底開始反彈，新的生機出現。", "失敗後重新出發的好時機。休養生息後，計畫重新啟動。", "大病初癒或冷戰結束。迷途知返，家庭重獲生機。", "初九:不遠復|迷途知返，沒有走得太遠，大吉|及時回頭", "六二:休復吉|美好而從容地復歸正道，吉利|從容復歸", "六三:頻復厲無咎|頻繁失誤又頻繁改過，雖危險但無大礙|屢錯屢改", "六四:中行獨復|在眾人皆迷時，獨自走向正道|獨守正道", "六五:敦復無悔|敦厚老實地復歸正道，沒有後悔|敦厚改過", "上六:迷復凶|執迷不悟，錯過回頭的機會，大凶|執迷不悟"],
-        ["100111", "天雷無妄", "真實無妄", "平", "⭐⭐⭐", "真實不虛偽，順其自然。不可有非分之想或妄動。", "不宜投機取巧或貪圖捷徑。腳踏實地，意外之災自然遠離。", "保持平常心，不要對家人有不切實際的期望。順其自然。", "初九:無妄往吉|不虛偽，動機純正地前進，吉利|動機純正", "六二:不耕獲|不貪圖收穫而默默耕耘，順其自然吉|不求回報", "六三:無妄之災|飛來橫禍，無辜受牽連，需小心防範|飛來橫禍", "九四:可貞無咎|堅守正道，不受外界誘惑，無災禍|堅守正道", "九五:無妄之疾|自然發生的疾病，不用藥也會自己好|不藥而癒", "上九:無妄行有眚|雖然動機純，但時機不對，行動有災|時機不對"],
-        ["111001", "山天大畜", "積蓄巨大", "大吉", "⭐⭐⭐⭐", "剛健篤實，將巨大的能量與德行蓄積起來。利於長遠發展。", "吸收新知、累積資金與人脈的時期。準備迎接大爆發。", "增加家庭儲蓄。重視品德與知識的教育，厚積薄發。", "初九:有厲利已|有危險，暫時停止行動為宜|暫時停止", "九二:輿說輻|車輪脫落，被迫停止前進，退守積蓄|被迫停止", "九三:良馬逐利艱貞|良馬奔馳，在艱難中堅守正道，吉|艱難前進", "六四:童牛之牿|給小牛戴枷鎖防觸人，防患未然大吉|防患未然", "六五:豶豕之牙|閹割野豬使其溫馴，從根本解決問題吉|從根本解決", "上九:何天之衢|積蓄充足，天路亨通，大展宏圖|天路亨通"],
-        ["100001", "山雷頤", "頤養身心", "平", "⭐⭐⭐", "形狀像嘴巴。強調養生之道，需慎言語、節飲食。", "注意企業的財務體質（現金流）。言多必失，少說多做。", "關注家人的飲食健康。溝通時注意口氣，避免禍從口出。", "初九:舍爾靈龜|放棄自己優勢去羨慕別人，自討苦吃凶|切勿羨慕", "六二:顛頤拂經|顛倒養育關係，違背常理求養，不順|違背常理", "六三:拂頤貞凶|違背養育正道，過度追求享樂，凶|過度享樂", "六四:顛頤吉|顛倒關係但出於公心求賢，結果吉利|出於公心", "六五:拂經居貞吉|雖違背常理但堅守正道，不可輕舉妄動|堅守正道", "上九:由頤厲吉|天下仰賴其養育，責任重大但吉利|擔當重任"],
-        ["011110", "澤風大過", "壓力過大", "凶", "⭐⭐", "棟樑彎曲，陽氣過盛，壓力超出負荷。非常時期需非常手段。", "工作負擔太重，隨時可能崩潰。需尋求外援或大刀闊斧減壓。", "家庭財務透支或精神壓力大。需面對現實，斷尾求生。", "初六:藉用白茅|極度謹慎小心，如用白茅墊底，無災禍|極度謹慎", "九二:枯楊生稊|枯樹發芽，老夫少妻，獲得意外生機|意外生機", "九三:棟橈凶|棟樑彎曲不勝負荷，剛愎自用必凶|不堪負荷", "九四:棟隆吉|棟樑隆起能撐住壓力，但需防小人|撐住壓力", "九五:枯楊生華|枯樹開花不長久，老妻少夫，難以結果|華而不實", "上六:過涉滅頂|涉水過深招致滅頂之災，但勇氣可嘉凶|涉險滅頂"],
-        ["010010", "坎為水", "重重險阻", "大凶", "⭐", "內外皆險，危機重重。必須熟悉水性，隨波逐流，守信求生。", "面臨重大危機或低潮。不可硬拼，需保持冷靜，見機行事。", "家中突遭變故，情緒陷入低谷。緊抓核心價值，咬牙撐過。", "初六:習坎入于坎窞|險上加險，越陷越深，凶險無比|險上加險", "九二:坎有險求小得|險中有微小收穫，不可貪大求功|不貪求功", "六三:來之坎坎|進退皆是險阻，不如暫時按兵不動|暫時不動", "六四:樽酒簋貳|簡約祭祀，誠心誠意，最終可免災禍|誠心誠意", "九五:坎不盈祇既平|水未滿險未平，但能保持中正不亂|保持中正", "上六:系用徽纆|被繩索綑綁困於叢棘，徹底失去自由凶|失去自由"],
-        ["101101", "離為火", "附麗光明", "吉", "⭐⭐⭐", "象徵太陽、文明與熱情。但也代表「依附」，火需燃料才能燒。", "需依附大企業或強勢領導。展現熱情與才華，光明正大。", "感情熱烈。注意用火安全與情緒控管，易怒易躁。", "初九:履錯然敬之無咎|舉止謹慎防備，小心火燭無災|小心謹慎", "六二:黃離元吉|中正光明，柔順依附，大吉大利|中正光明", "九三:日昃之離|夕陽西下，感嘆衰老悲觀，招致凶險|避免悲觀", "九四:突如其來如|突如其來的災難或意外，令人措手不及|突發災難", "六五:出涕沱若|保有憂患意識，悲憫反省，結果吉利|憂患意識", "上九:王用出征|出征獲勝，斬除首惡，寬恕脅從|斬除首惡"],
-        ["001110", "澤山咸", "感應相通", "大吉", "⭐⭐⭐⭐", "山澤通氣，心靈感應。無心之感，利於感情婚嫁與人際交流。", "直覺敏銳，與客戶或夥伴默契極佳。適合合作結盟。", "夫妻感情甜蜜，心有靈犀。非常適合談戀愛或受孕。", "初六:咸其拇|感應在腳趾，只有微小的行動意向|微小意向", "六二:咸其腓|感應在小腿，躁動妄進則凶，安居則吉|切勿躁動", "六三:咸其股|感應在大腿，盲目跟隨他人，執迷不悟|盲目跟隨", "九四:貞吉悔亡|心意不定，朋友因你的心思而來往|心意不定", "九五:咸其脢|感應在背肉，意志堅定不受外界干擾無悔|意志堅定", "上六:咸其輔頰舌|感應在口舌，只會說空話而無實際行動|光說不練"],
-        ["011100", "雷風恆", "長久恆定", "大吉", "⭐⭐⭐⭐", "不易其心，長久堅持。代表穩定的狀態與不變的原則。", "適合長期投資或堅持現有策略。不宜頻繁變換跑道。", "婚姻穩定長久。維持良好的生活習慣，平淡是福。", "初六:浚恆貞凶|求之太深，剛開始就要求過高，凶|求之太急", "九二:悔亡|保持中庸之道，後悔的事情自然消除|保持中庸", "九三:不恆其德|德行不恆定，反覆無常，必蒙受羞辱|反覆無常", "九四:田無禽|不在其位不謀其政，徒勞無功沒有收穫|徒勞無功", "六五:恆其德|婦人堅守恆德吉，男子宜變通不宜死守|適度變通", "上六:振恆凶|動盪不穩，心神不定妄動，招致凶險|心神不定"],
-        ["001111", "天山遯", "退避隱居", "平", "⭐⭐", "陰氣漸長，小人勢力抬頭。君子應當退避三舍，明哲保身。", "大環境不佳，不宜逆勢抗爭。適時撤資、辭職或隱退。", "遠離是非圈。享受清靜的家庭生活，不與人攀比爭鬥。", "初六:遯尾厲|逃在最後面，處境最危險，不宜妄動|落後危險", "六二:執之用黃牛之革|以堅定的意志退隱，無人能改變|意志堅定", "九三:系遯有疾厲|被牽制無法順利逃脫，處境危險生病|受困牽制", "九四:好遯|君子能瀟灑割捨退去吉，小人則做不到|瀟灑割捨", "九五:嘉遯貞吉|美好的退隱，獲得讚譽，堅守正道吉|美好退隱", "上九:肥遯無不利|寬裕從容的退隱，遠離一切煩惱無不利|從容退隱"],
-        ["111100", "雷天大壯", "聲勢壯大", "小吉", "⭐⭐⭐", "陽氣強盛，聲勢壯大。但剛強過度容易受傷，宜適可而止。", "氣勢如虹，但也容易引發衝突。請克制衝動，理智行事。", "家中有成員脾氣較大。凡事留一線，不要理直氣壯壓人。", "初九:壯于趾征凶|趾高氣揚，恃強輕進，出征必凶|恃強輕進", "九二:貞吉|堅守中正之道，不過度使用武力，吉利|堅守中正", "九三:小人用壯|小人逞強，君子則隱忍不用強，防受傷|切勿逞強", "九四:藩決不羸|衝破障礙，不再受困，適時發揮力量|衝破障礙", "六五:喪羊于易|失去像羊一樣頂撞的脾氣，轉為溫和無悔|收斂脾氣", "上六:羝羊觸藩|像公羊角卡在籬笆，進退兩難，需靜待|進退兩難"],
-        ["000101", "火地晉", "旭日東昇", "大吉", "⭐⭐⭐⭐", "太陽離開地平線升起，步步高升，前途光明。利於求進。", "獲得升遷或被高層賞識的絕佳機會。積極展現才華。", "家運蒸蒸日上。有喜事臨門，適合推展新計畫。", "初六:晉如摧如|剛開始受挫，但只要堅守正道依然吉利|受挫堅持", "六二:晉如愁如|前進中帶有憂愁，但獲高層賞識吉利|化解憂愁", "六三:眾允悔亡|獲得眾人信服與支持，後悔的事情消除|獲眾支持", "九四:晉如鼫鼠|像貪婪的碩鼠，貪位戀權，處境危險|貪權危險", "六五:悔亡失得勿恤|不計較一時得失，大步向前，大吉|不計得失", "上九:晉其角|前進到極點，強行進攻僅可用於懲治內部|適可而止"],
-        ["1
+    // ==========================================================
+    // 1. 八卦資料 (Trigrams)
+    // ==========================================================
+    const trigramMap = {
+        "111": {n:"天", s:"☰"}, "000": {n:"地", s:"☷"},
+        "100": {n:"雷", s:"☳"}, "010": {n:"水", s:"☵"},
+        "001": {n:"山", s:"☶"}, "110": {n:"澤", s:"☱"},
+        "101": {n:"火", s:"☲"}, "011": {n:"風", s:"☴"}
+    };
+
+    // ==========================================================
+    // 2. 六十四卦基礎資料 (64 Hexagrams)
+    // ==========================================================
+    const hexMap = {
+        "111111": {n:"乾為天", s:"剛健中正", id:1, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, 
+        "000000": {n:"坤為地", s:"柔順包容", id:2, stars:"⭐⭐⭐⭐⭐", tag:"大吉"},
+        "100010": {n:"水雷屯", s:"萬物始生", id:3, stars:"⭐⭐", tag:"凶"}, 
+        "010001": {n:"山水蒙", s:"啟蒙之際", id:4, stars:"⭐⭐", tag:"平"},
+        "111010": {n:"水天需", s:"等待時機", id:5, stars:"⭐⭐⭐", tag:"平"}, 
+        "010111": {n:"天水訟", s:"爭執訴訟", id:6, stars:"⭐", tag:"凶"},
+        "010000": {n:"地水師", s:"行軍打仗", id:7, stars:"⭐⭐⭐", tag:"吉"}, 
+        "000010": {n:"水地比", s:"親近依附", id:8, stars:"⭐⭐⭐⭐", tag:"吉"},
+        "111011": {n:"風天小畜", s:"密雲不雨", id:9, stars:"⭐⭐⭐", tag:"平"}, 
+        "110111": {n:"天澤履", s:"如履薄冰", id:10, stars:"⭐⭐", tag:"凶"},
+        "111000": {n:"地天泰", s:"天地交泰", id:11, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, 
+        "000111": {n:"天地否", s:"閉塞不通", id:12, stars:"⭐", tag:"大凶"},
+        "101111": {n:"天火同人", s:"與人同心", id:13, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "111101": {n:"火天大有", s:"如日中天", id:14, stars:"⭐⭐⭐⭐⭐", tag:"大吉"},
+        "001000": {n:"地山謙", s:"謙虛受益", id:15, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "000100": {n:"雷地豫", s:"安樂愉悅", id:16, stars:"⭐⭐⭐", tag:"吉"},
+        "100110": {n:"澤雷隨", s:"隨順時勢", id:17, stars:"⭐⭐⭐", tag:"吉"}, 
+        "011001": {n:"山風蠱", s:"整治革新", id:18, stars:"⭐⭐", tag:"凶"},
+        "110000": {n:"地澤臨", s:"親臨視察", id:19, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "000011": {n:"風地觀", s:"觀察展示", id:20, stars:"⭐⭐⭐", tag:"平"},
+        "100101": {n:"火雷噬嗑", s:"咬斷硬物", id:21, stars:"⭐⭐⭐", tag:"平"}, 
+        "101001": {n:"山火賁", s:"裝飾修飾", id:22, stars:"⭐⭐⭐", tag:"小吉"},
+        "000001": {n:"山地剝", s:"剝落侵蝕", id:23, stars:"⭐", tag:"大凶"}, 
+        "100000": {n:"地雷復", s:"萬物復甦", id:24, stars:"⭐⭐⭐⭐", tag:"吉"},
+        "100111": {n:"天雷無妄", s:"真實無妄", id:25, stars:"⭐⭐⭐", tag:"平"}, 
+        "111001": {n:"山天大畜", s:"積蓄巨大", id:26, stars:"⭐⭐⭐⭐", tag:"大吉"},
+        "100001": {n:"山雷頤", s:"頤養身心", id:27, stars:"⭐⭐⭐", tag:"平"}, 
+        "011110": {n:"澤風大過", s:"壓力過大", id:28, stars:"⭐⭐", tag:"凶"},
+        "010010": {n:"坎為水", s:"重重險阻", id:29, stars:"⭐", tag:"大凶"}, 
+        "101101": {n:"離為火", s:"附麗光明", id:30, stars:"⭐⭐⭐", tag:"吉"},
+        "001110": {n:"澤山咸", s:"感應相通", id:31, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "011100": {n:"雷風恆", s:"長久恆定", id:32, stars:"⭐⭐⭐⭐", tag:"大吉"},
+        "001111": {n:"天山遯", s:"退避隱居", id:33, stars:"⭐⭐", tag:"平"}, 
+        "111100": {n:"雷天大壯", s:"聲勢壯大", id:34, stars:"⭐⭐⭐", tag:"小吉"},
+        "000101": {n:"火地晉", s:"旭日東昇", id:35, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "101000": {n:"地火明夷", s:"光明受損", id:36, stars:"⭐", tag:"大凶"},
+        "101011": {n:"風火家人", s:"誠信治家", id:37, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, 
+        "110101": {n:"火澤睽", s:"背道而馳", id:38, stars:"⭐", tag:"凶"},
+        "001010": {n:"水山蹇", s:"寸步難行", id:39, stars:"⭐", tag:"大凶"}, 
+        "010100": {n:"雷水解", s:"災難解除", id:40, stars:"⭐⭐⭐⭐", tag:"吉"},
+        "110001": {n:"山澤損", s:"減損犧牲", id:41, stars:"⭐⭐", tag:"平"}, 
+        "100111": {n:"風雷益", s:"利益增加", id:42, stars:"⭐⭐⭐⭐⭐", tag:"大吉"},
+        "111110": {n:"澤天夬", s:"決斷清除", id:43, stars:"⭐⭐", tag:"凶"}, 
+        "011111": {n:"天風姤", s:"不期而遇", id:44, stars:"⭐⭐", tag:"凶"},
+        "000110": {n:"澤地萃", s:"聚集匯合", id:45, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "011000": {n:"地風升", s:"樹木生長", id:46, stars:"⭐⭐⭐⭐", tag:"大吉"},
+        "010110": {n:"澤水困", s:"窮困潦倒", id:47, stars:"⭐", tag:"大凶"}, 
+        "011010": {n:"水風井", s:"養民之源", id:48, stars:"⭐⭐⭐", tag:"吉"},
+        "101110": {n:"澤火革", s:"改革變舊", id:49, stars:"⭐⭐⭐", tag:"吉"}, 
+        "011101": {n:"火風鼎", s:"穩重圖新", id:50, stars:"⭐⭐⭐⭐", tag:"大吉"},
+        "100100": {n:"震為雷", s:"震驚百里", id:51, stars:"⭐⭐", tag:"驚恐"}, 
+        "001001": {n:"艮為山", s:"靜止不動", id:52, stars:"⭐⭐", tag:"平"},
+        "001011": {n:"風山漸", s:"循序漸進", id:53, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "110100": {n:"雷澤歸妹", s:"少女急嫁", id:54, stars:"⭐", tag:"凶"},
+        "101100": {n:"雷火豐", s:"豐盛巨大", id:55, stars:"⭐⭐⭐", tag:"吉"}, 
+        "001101": {n:"火山旅", s:"羈旅在外", id:56, stars:"⭐⭐", tag:"不穩"},
+        "011011": {n:"巽為風", s:"順從深入", id:57, stars:"⭐⭐⭐", tag:"小吉"}, 
+        "110110": {n:"兌為澤", s:"喜悅溝通", id:58, stars:"⭐⭐⭐", tag:"吉"},
+        "010011": {n:"風水渙", s:"渙散分離", id:59, stars:"⭐⭐", tag:"平"}, 
+        "110010": {n:"水澤節", s:"節制約束", id:60, stars:"⭐⭐", tag:"平"},
+        "110011": {n:"風澤中孚", s:"誠信在心", id:61, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
+        "001100": {n:"雷山小過", s:"小有過越", id:62, stars:"⭐⭐", tag:"小凶"},
+        "101010": {n:"水火既濟", s:"事情已成", id:63, stars:"⭐⭐⭐", tag:"小吉"}, 
+        "010101": {n:"火水未濟", s:"事情未成", id:64, stars:"⭐⭐", tag:"平"}
+    };
+
+    // ==========================================================
+    // 3. 詳細文案資料庫
+    // ==========================================================
+    const detailedDB = {
+        "1": {
+            gen: "乾卦代表純粹的陽剛能量，象徵「創造」與「領袖」。就像太陽高掛天空，充滿活力與動力。你的運勢正旺，適合啟動大計畫。",
+            work: "事業運極強，有機會擔任領導角色或開創新局。但要注意，能力越強責任越大，切忌傲慢，要懂得與人合作。",
+            fam: "<ul class='detail-list'><li><strong><span class='highlight-text'>家庭能量</span>：</strong>陽氣極盛，充滿活力。</li><li><strong><span class='highlight-text'>決策方向</span>：</strong>非常利於執行家庭的重大計畫，例如買房、創業、搬家。</li><li><strong><span class='highlight-text'>相處提醒</span>：</strong>注意「過剛易折」，長輩不要太強勢命令，要學習「剛柔並濟」，多聽聽家人的感受。</li></ul>",
+            yaos: [
+                {v: "時機未到，能力還不足。低調學習，不要急著表現。", tip: "沈潛勿動"},
+                {v: "才華初露，是展現自我的好時機，會得到長輩賞識。", tip: "尋求前輩"},
+                {v: "處於上升期壓力大，勤奮工作並隨時反省，雖苦無災。", tip: "勤奮謹慎"},
+                {v: "面臨進退的關卡。可以嘗試突破現狀，關鍵的嘗試點。", tip: "大膽嘗試"},
+                {v: "運勢達到最高峰，事業與家庭都非常圓滿，發揮影響力。", tip: "大展宏圖"},
+                {v: "凡事不可太過分，態度傲慢容易導致失敗。懂得急流勇退。", tip: "知足謙虛"}
+            ]
+        },
+        "2": {
+            gen: "這是一個關於「包容」與「配合」的卦象。就像大地承載萬物一樣，不爭先、不主導，而是順應局勢，給予支持。",
+            work: "現在不是強出頭的時候。適合擔任輔佐、執行或幕僚的角色。跟隨一位好的領導者，默默耕耘，未來會有巨大的收穫。",
+            fam: "<ul class='detail-list'><li><strong><span class='highlight-text'>家庭氣氛</span>：</strong>溫暖、包容、和諧。</li><li><strong><span class='highlight-text'>角色扮演</span>：</strong>最適合發揮「母親」的特質：包容缺點、照顧生活。</li><li><strong><span class='highlight-text'>相處之道</span>：</strong>不要急著做決定或爭輸贏，先安撫情緒。「以柔克剛」是最好智慧。</li></ul>",
+            yaos: [
+                {v: "見微知著。看到小問題的徵兆要立刻處理，否則變大麻煩。", tip: "防微杜漸"},
+                {v: "內心正直、行為端正，順其自然發展就會很順利。", tip: "正直順從"},
+                {v: "有才華但不炫耀。默默支持，把功勞歸給別人反而能長久。", tip: "低調輔佐"},
+                {v: "環境險惡時，謹慎小心，閉嘴不言，能保平安。", tip: "謹言慎行"},
+                {v: "地位高還能保持謙虛柔順，這是大吉大利的象徵。", tip: "謙虛待人"},
+                {v: "太強勢導致兩敗俱傷。家庭爭吵激烈，沒有贏家。", tip: "避免衝突"}
+            ]
+        },
+        "37": {
+            gen: "風自火出，熱氣向外擴散。這代表一切的基礎在於「內部」。先把家裡（或團隊內部）安頓好，外面的事情自然順利。",
+            work: "團隊合作是關鍵。現在不是單打獨鬥的時候，要確認團隊成員各司其職，內部溝通順暢。產品或服務要回歸核心價值。",
+            fam: `
+                <ul class="detail-list">
+                    <li><strong><span class="highlight-text">核心精神</span>：</strong>各盡其責，父慈子孝，兄友弟恭。</li>
+                    <li><strong><span class="highlight-text">夫妻相處</span>：</strong>互相尊重，分工明確（如女主內男主外，或依能力分配），不要越俎代庖。</li>
+                    <li><strong><span class="highlight-text">親子教育</span>：</strong>父母要慈愛但有原則，建立明確的家規。身教重於言教。</li>
+                    <li><strong><span class="highlight-text">生活建議</span>：</strong>最近非常適合舉辦家庭聚餐或家庭會議。若有爭執，請回歸「家和萬事興」的初衷，用溫暖的方式溝通，問題即刻迎刃而解。</li>
+                </ul>
+            `,
+            yaos: [
+                {v: "防患未然，立好規矩。", tip: "預先立規"},
+                {v: "重心放在照顧家庭與內部事務，不要盲目追求外在。", tip: "回歸家庭"},
+                {v: "治家嚴厲雖然有抱怨，但終吉；太隨便嘻笑反而不好。", tip: "嚴格要求"},
+                {v: "把家庭經營得心靈與物質都富足，大吉大利。", tip: "經營財富"},
+                {v: "家長以身作則，像君王愛護百姓一樣愛護家人，吉利。", tip: "以身作則"},
+                {v: "保持誠信並帶有威嚴，說到做到，最終獲得吉祥。", tip: "誠信威嚴"}
+            ]
+        },
+        "44": {
+            gen: "姤卦代表「邂逅」與「意外」。一股微小的陰柔力量突然闖入。這可能是一個機會，也可能是一個誘惑，或者是一個破壞平衡的變數。",
+            work: "職場上可能會出現突發狀況，或者新的競爭對手（往往不起眼但有潛力）。適合做行銷、公關、傳播（像風一樣），但不適合簽訂長約，基礎不穩。",
+            fam: `
+                <ul class="detail-list">
+                    <li><strong><span class="highlight-text">核心狀態</span>：</strong>警戒期。可能有外來的干擾或誘惑。</li>
+                    <li><strong><span class="highlight-text">感情婚姻</span>：</strong>容易有爛桃花、第三者或不適當的曖昧關係介入，請保持定力與界線。</li>
+                    <li><strong><span class="highlight-text">生活突發</span>：</strong>家裡可能會來不速之客，或有突發的小意外打亂計畫。</li>
+                    <li><strong><span class="highlight-text">應對建議</span>：</strong>夫妻間要多溝通，對外來的誘惑保持距離。面對突發狀況，不要衝動，冷靜觀察後再行動，切勿意氣用事。</li>
+                </ul>
+            `,
+            yaos: [
+                {v: "危機剛萌芽，要像踩煞車一樣立刻制止不當的念頭。", tip: "立刻制止"},
+                {v: "意外資源或問題，控制在內部消化解決即可，不要張揚。", tip: "低調處理"},
+                {v: "處境尷尬，坐立難安。忍耐不動，反而無災。", tip: "安分守己"},
+                {v: "因為疏忽、脫離群眾，導致機會溜走或讓小人得逞，凶。", tip: "檢討疏忽"},
+                {v: "展現大氣度，包容家人的過錯或意外的變化，會有天助。", tip: "大度包容"},
+                {v: "個性太過孤僻高傲，拒絕溝通，令人遺憾。", tip: "放下身段"}
+            ]
+        }
+    };
+
+    // 自動補齊其餘 60 卦的通用智慧文本
+    for(let i=1; i<=64; i++) {
+        const idStr = i.toString();
+        if(!detailedDB[idStr]) {
+            const key = Object.keys(hexMap).find(k => hexMap[k].id === i);
+            const base = hexMap[key];
+            detailedDB[idStr] = {
+                gen: `此卦為【${base.n}】。卦象特質為「${base.s}」。代表當前局勢正處於 ${base.tag} 的狀態，應根據此卦的特性來調整步伐。`,
+                work: `在事業與決策上，應秉持「${base.s}」的精神。若為吉卦，請積極進取、擴展版圖；若為凶卦或平卦，請保守待機，多觀察環境變化，切勿盲目投資。`,
+                fam: `<ul class='detail-list'><li><strong><span class='highlight-text'>家庭狀態</span>：</strong>目前家庭能量呈現「${base.s}」的特質。</li><li><strong><span class='highlight-text'>相處建議</span>：</strong>保持溝通順暢，以和為貴。遇到困難時共同面對，遇到順境時共同分享。</li><li><strong><span class='highlight-text'>行動指標</span>：</strong>整體吉凶為【${base.tag}】，請依此調整近期的家庭計畫。</li></ul>`,
+                yaos: [
+                    {v: "事情初發，變數產生。請留意細微的變化，謹慎應對。", tip: "謹慎起步"},
+                    {v: "局勢發展中，動爻顯示需在此階段保持中正平和的態度。", tip: "保持平衡"},
+                    {v: "面臨轉折或挑戰。此爻變動提醒您不要急躁，需看清局勢。", tip: "冷靜觀察"},
+                    {v: "位置關鍵，動爻暗示可能有外力介入或環境變遷。", tip: "隨機應變"},
+                    {v: "處於核心地位，變動將產生重大影響。請秉持正道行事。", tip: "秉持正道"},
+                    {v: "事情發展至極點。變爻提醒「物極必反」，請知所進退。", tip: "知所進退"}
+                ]
+            };
+        }
+    }
+
+    // ==========================================================
+    // 4. 程式邏輯 (Application Logic)
+    // ==========================================================
+    let currentStep = 0;
+    let hexCode = [];   
+    let moveArr = [];   
+    let currentGuaData = null; 
+
+    function getYaoName(idx, val) {
+        const p = ["初","二","三","四","五","上"][idx];
+        const t = val===1?"九":"六";
+        return idx===0?`初${t}` : (idx===5?`上${t}` : `${t}${p}`);
+    }
+
+    function getHexSymbol(id) {
+        return String.fromCodePoint(0x4DC0 + id - 1);
+    }
+
+    function formatGuaName(name) {
+        if (!name) return "";
+        const firstTwo = name.slice(0, 2);
+        const rest = name.slice(2);
+        return `<span class="indigo-char">${firstTwo}</span><span class="red-char">${rest}</span>`;
+    }
+
+    function getMiniHexHTML(binaryCodeStr) {
+        let html = '<div class="mini-hex-container">';
+        for (let i = 0; i < 6; i++) {
+            const type = binaryCodeStr[i] === '1' ? 'yang' : 'yin';
+            html += `<div class="mini-line ${type}"></div>`;
+        }
+        html += '</div>';
+        return html;
+    }
+
+    // 安全的事件綁定
+    function setIntent(text, element) {
+        document.getElementById('intentText').innerHTML = `您想詢問：<span style="color:var(--work); font-weight:bold;">${text}</span>。請專注默念您的問題，然後開始起卦。`;
+        document.querySelectorAll('.chip').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+    }
+
+    function switchPage(id) {
+        document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
+    }
+    
+    function goHome() { switchPage('viewHome'); }
+    function goBackFromDetail() { switchPage('viewHome'); }
+
+    function startDivination() {
+        currentStep = 0; hexCode = []; moveArr = [];
+        resetCoins();
+        document.getElementById('tossResultText').textContent = "";
+        document.getElementById('progressBar').style.width = "0%";
+        document.getElementById('tossBtn').disabled = false; // 確保重啟時按鈕可用
+        updateStepText();
+        switchPage('viewDivination');
+    }
+
+    function toss() {
+        if(currentStep >= 6) return;
+
+        const btn = document.getElementById('tossBtn');
+        btn.disabled = true;
+
+        const coins = document.querySelectorAll('.coin');
+        coins.forEach(c => c.classList.add('flipping'));
+
+        setTimeout(() => {
+            coins.forEach(c => c.classList.remove('flipping'));
+            
+            const r1 = Math.random()>0.5?3:2;
+            const r2 = Math.random()>0.5?3:2;
+            const r3 = Math.random()>0.5?3:2;
+            const sum = r1 + r2 + r3;
+
+            renderCoins(r1, r2, r3);
+
+            let val, move, txt;
+            if(sum===6) { val=0; move=true; txt="老陰 (變爻 ✖)"; }
+            else if(sum===9) { val=1; move=true; txt="老陽 (變爻 ⭕)"; }
+            else if(sum===7) { val=1; move=false; txt="少陽"; }
+            else { val=0; move=false; txt="少陰"; }
+
+            hexCode.push(val);
+            moveArr.push(move);
+            
+            document.getElementById('tossResultText').textContent = `結果：${txt}`;
+            currentStep++;
+            document.getElementById('progressBar').style.width = `${(currentStep/6)*100}%`;
+
+            if(currentStep < 6) {
+                updateStepText();
+                btn.disabled = false;
+            } else {
+                setTimeout(() => {
+                    generateAndShowResult(hexCode, moveArr);
+                }, 1000);
+            }
+        }, 800);
+    }
+
+    function updateStepText() {
+        document.getElementById('stepText').textContent = `第 ${currentStep+1} 爻 (由下而上)`;
+    }
+
+    function renderCoins(r1, r2, r3) {
+        const els = document.querySelectorAll('.coin');
+        [r1, r2, r3].forEach((v, i) => {
+            els[i].className = v===3 ? 'coin tail' : 'coin';
+            els[i].textContent = v===3 ? '花' : '字';
+        });
+    }
+
+    function resetCoins() {
+        document.querySelectorAll('.coin').forEach(c => { c.className='coin'; c.textContent='?'; });
+    }
+
+    function generateAndShowResult(code, moves) {
+        const key = code.map(String).join('');
+        const base = hexMap[key];
+
+        if(!base) { alert("發生錯誤，請重試"); goHome(); return; }
+
+        let detail = detailedDB[base.id.toString()];
+        
+        // 深拷貝，以免修改到原資料庫
+        let finalData = JSON.parse(JSON.stringify({ ...base, ...detail, c: code }));
+
+        // 加上吉凶標頭
+        finalData.gen = `<strong style='color:var(--accent); font-size:1.1em;'>【${base.tag}】 ${base.stars}</strong><br><br>` + finalData.gen;
+
+        renderDetail(finalData, moves);
+        switchPage('viewResult');
+    }
+
+    function renderDetail(data, moves) {
+        currentGuaData = data;
+        hexCode = data.c;
+        moveArr = moves;
+
+        document.getElementById('rId').textContent = `第 ${data.id} 卦`;
+        
+        const tagBox = document.getElementById('rTags');
+        tagBox.innerHTML = `<span class="luck-badge">${data.stars} ${data.tag}</span>`;
+
+        const symbol = getHexSymbol(data.id);
+        document.getElementById('rTitle').innerHTML = 
+            `${data.id}. <span class="hex-symbol-lg">${symbol}</span> ${formatGuaName(data.n)}`;
+        document.getElementById('rSub').textContent = data.s;
+
+        const lowerCode = data.c.slice(0,3).join('');
+        const upperCode = data.c.slice(3,6).join('');
+        
+        const lowerT = trigramMap[lowerCode];
+        const upperT = trigramMap[upperCode];
+
+        document.getElementById('lowerIcon').textContent = lowerT.s;
+        document.getElementById('lowerName').textContent = `下卦(${lowerT.n})`;
+        document.getElementById('upperIcon').textContent = upperT.s;
+        document.getElementById('upperName').textContent = `上卦(${upperT.n})`;
+
+        document.getElementById('rGen').innerHTML = data.gen;
+        document.getElementById('rWork').innerHTML = data.work;
+        document.getElementById('rFam').innerHTML = data.fam;
+
+        // 如果是起卦模式，顯示教學區
+        const hasMove = moveArr.includes(true);
+        if(moves.length > 0 && moves.includes(true) || moves.includes(false)) {
+             document.getElementById('teachBox').style.display = 'block';
+        } else {
+             document.getElementById('teachBox').style.display = 'none';
+        }
+
+        renderInteractiveHex();
+    }
+
+    function renderInteractiveHex() {
+        const rLines = document.getElementById('rLines');
+        const rZhiLines = document.getElementById('rZhiLines');
+        const rYaoList = document.getElementById('rYaoList');
+
+        rLines.innerHTML = '';
+        rZhiLines.innerHTML = '';
+        rYaoList.innerHTML = '';
+
+        let zhiCode = [...hexCode];
+        const hasMove = moveArr.includes(true);
+
+        for(let i=5; i>=0; i--) {
+            const isMove = moveArr[i];
+            const type = hexCode[i]===1 ? 'yang' : 'yin';
+            const line = document.createElement('div');
+            line.className = `line ${type} ${isMove?'moving':''}`;
+            line.onclick = () => {
+                moveArr[i] = !moveArr[i];
+                renderInteractiveHex();
+            };
+            rLines.appendChild(line);
+
+            if(isMove) zhiCode[i] = zhiCode[i]===1 ? 0 : 1;
+
+            const yaoRow = document.createElement('div');
+            yaoRow.className = `yao-item ${isMove ? 'active' : ''}`;
+            if(hasMove && !isMove) yaoRow.style.opacity = '0.4';
+
+            const yaoName = getYaoName(i, hexCode[i]);
+            const yContent = currentGuaData.yaos[i];
+
+            yaoRow.innerHTML = `
+                <span class="yao-title">${yaoName} ${isMove?'(動爻 ★)':''}</span>
+                <div style="color:#555;">${yContent.v}</div>
+                <div class="yao-tip">💡 ${yContent.tip}</div>
+            `;
+            rYaoList.appendChild(yaoRow);
+        }
+
+        for(let i=5; i>=0; i--) {
+            const type = zhiCode[i]===1 ? 'yang' : 'yin';
+            const line = document.createElement('div');
+            line.className = `line ${type}`;
+            rZhiLines.appendChild(line);
+        }
+
+        if(hasMove) {
+            const zKey = zhiCode.map(String).join('');
+            const zData = hexMap[zKey];
+            document.getElementById('rZhiName').innerHTML = zData ? `變為：${formatGuaName(zData.n)}` : "未知變卦";
+        } else {
+            document.getElementById('rZhiName').textContent = "無變爻";
+        }
+    }
+
+    function showLibrary() {
+        const grid = document.getElementById('libGrid');
+        grid.innerHTML = '';
+
+        const sortedHexagrams = Object.values(hexMap).sort((a, b) => a.id - b.id);
+
+        sortedHexagrams.forEach(base => {
+            const symbol = getHexSymbol(base.id);
+            const key = Object.keys(hexMap).find(k => hexMap[k].id === base.id);
+            const miniHexHTML = getMiniHexHTML(key);
+
+            const item = document.createElement('div');
+            item.className = 'lib-item';
+            
+            item.innerHTML = `
+                ${miniHexHTML}
+                <div class="lib-name">
+                    ${base.id}. <span class="hex-symbol-sm">${symbol}</span> ${formatGuaName(base.n)}
+                </div>
+                <div style="font-size:0.8rem; color:#888; margin-top:5px;">
+                    ${base.s} <strong style="color:var(--accent);">(${base.tag})</strong>
+                </div>
+            `;
+            
+            item.onclick = () => {
+                const code = key.split('').map(Number);
+                // 瀏覽模式不帶變爻，隱藏教學區塊
+                document.getElementById('teachBox').style.display = 'none';
+                generateAndShowResult(code, [false,false,false,false,false,false]);
+            };
+            grid.appendChild(item);
+        });
+
+        switchPage('viewLibrary');
+    }
+
+    document.getElementById('libSearch').addEventListener('input', (e) => {
+        const v = e.target.value.trim();
+        const items = document.querySelectorAll('.lib-item');
+        items.forEach(item => {
+            const text = item.innerText;
+            item.style.display = text.includes(v) ? 'block' : 'none';
+        });
+    });
+
+</script>
+
+</body>
+</html>
