@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>易經生活智慧導航：深度指引版</title>
+    <title>易經生活智慧導航：精簡目錄版</title>
     <style>
         :root {
             --bg-color: #f7f9fc;
@@ -106,7 +106,6 @@
         
         .indigo-char { color: var(--indigo); }
         .red-char { color: var(--accent); }
-        .hex-symbol-lg { color: var(--accent); font-size: 1.3em; margin: 0 10px; vertical-align: middle; }
 
         /* 吉凶與結構 */
         .meta-box { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -184,7 +183,6 @@
         .mini-line.yin { background: linear-gradient(90deg, var(--yin-color) 40%, transparent 40%, transparent 60%, var(--yin-color) 60%); }
 
         .lib-name { font-weight: bold; font-size: 1.1rem; color: var(--primary); }
-        .hex-symbol-sm { color: var(--accent); font-size: 1.8rem; line-height: 1; display: inline-block; margin: 0 5px; vertical-align: sub; }
 
         /* 搜尋框 */
         .search-input {
@@ -358,7 +356,7 @@
 
 <script>
     // ==========================================================
-    // 1. 八卦資料 (Trigrams)
+    // 1. 八卦資料
     // ==========================================================
     const trigramMap = {
         "111": {n:"天", s:"☰"}, "000": {n:"地", s:"☷"},
@@ -368,8 +366,7 @@
     };
 
     // ==========================================================
-    // 2. 六十四卦基礎資料 (64 Hexagrams Base Data)
-    // 修正了第 42 卦代碼為 100011，確保第 25 卦能正確顯示
+    // 2. 六十四卦基礎資料
     // ==========================================================
     const hexMap = {
         "111111": {n:"乾為天", s:"剛健中正", id:1, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, 
@@ -413,7 +410,7 @@
         "001010": {n:"水山蹇", s:"寸步難行", id:39, stars:"⭐", tag:"大凶"}, 
         "010100": {n:"雷水解", s:"災難解除", id:40, stars:"⭐⭐⭐⭐", tag:"吉"},
         "110001": {n:"山澤損", s:"減損犧牲", id:41, stars:"⭐⭐", tag:"平"}, 
-        "100011": {n:"風雷益", s:"利益增加", id:42, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, /* 修正處 */
+        "100011": {n:"風雷益", s:"利益增加", id:42, stars:"⭐⭐⭐⭐⭐", tag:"大吉"}, 
         "111110": {n:"澤天夬", s:"決斷清除", id:43, stars:"⭐⭐", tag:"凶"}, 
         "011111": {n:"天風姤", s:"不期而遇", id:44, stars:"⭐⭐", tag:"凶"},
         "000110": {n:"澤地萃", s:"聚集匯合", id:45, stars:"⭐⭐⭐⭐", tag:"大吉"}, 
@@ -561,10 +558,6 @@
         return idx===0?`初${t}` : (idx===5?`上${t}` : `${t}${p}`);
     }
 
-    function getHexSymbol(id) {
-        return String.fromCodePoint(0x4DC0 + id - 1);
-    }
-
     function formatGuaName(name) {
         if (!name) return "";
         const firstTwo = name.slice(0, 2);
@@ -647,7 +640,6 @@
                     generateAndShowResult(hexCode, moveArr);
                 }, 1000);
             }
-
         }, 800);
     }
 
@@ -692,9 +684,9 @@
         const tagBox = document.getElementById('rTags');
         tagBox.innerHTML = `<span class="luck-badge">${data.stars} ${data.tag}</span>`;
 
-        const symbol = getHexSymbol(data.id);
+        // 移除大標題的小卦象
         document.getElementById('rTitle').innerHTML = 
-            `${data.id}. <span class="hex-symbol-lg">${symbol}</span> ${formatGuaName(data.n)}`;
+            `${data.id}. ${formatGuaName(data.n)}`;
         document.getElementById('rSub').textContent = data.s;
 
         const lowerCode = data.c.slice(0,3).join('');
@@ -785,17 +777,17 @@
         const sortedHexagrams = Object.values(hexMap).sort((a, b) => a.id - b.id);
 
         sortedHexagrams.forEach(base => {
-            const symbol = getHexSymbol(base.id);
             const key = Object.keys(hexMap).find(k => hexMap[k].id === base.id);
             const miniHexHTML = getMiniHexHTML(key);
 
             const item = document.createElement('div');
             item.className = 'lib-item';
             
+            // 已移除紅色小卦象 Unicode
             item.innerHTML = `
                 ${miniHexHTML}
                 <div class="lib-name">
-                    ${base.id}. <span class="hex-symbol-sm">${symbol}</span> ${formatGuaName(base.n)}
+                    ${base.id}. ${formatGuaName(base.n)}
                 </div>
                 <div style="font-size:0.8rem; color:#888; margin-top:5px;">
                     ${base.s} <strong style="color:var(--accent);">(${base.tag})</strong>
